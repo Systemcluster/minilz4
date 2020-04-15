@@ -31,16 +31,14 @@ impl<'a, R: Read> Decoder<R> {
         })
     }
 
-    pub fn reader(&self) -> &R { &self.reader }
-
-    pub fn finish(self) -> (R, IOResult<()>) {
-        (self.reader, match self.next {
-            0 => Ok(()),
+    pub fn finish(self) -> IOResult<R> {
+        match self.next {
+            0 => Ok(self.reader),
             _ => Err(IOError::new(
                 IOErrorKind::Interrupted,
                 "Finish runned before read end of compressed stream",
             )),
-        })
+        }
     }
 }
 

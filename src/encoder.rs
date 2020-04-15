@@ -16,7 +16,7 @@ pub struct EncoderBuilder {
 
 pub struct Encoder<W: Write> {
     context: LZ4FCompressionContext,
-    writer:  W,
+    writer:  Option<W>,
     limit:   usize,
     buffer:  Vec<u8>,
 }
@@ -73,9 +73,9 @@ impl EncoderBuilder {
 
         let mut encoder = Encoder {
             context: LZ4FCompressionContext::new()?,
-            writer,
-            limit: self.block_size.bytes(),
-            buffer: Vec::with_capacity(wrap_error(unsafe {
+            writer:  Some(writer),
+            limit:   self.block_size.bytes(),
+            buffer:  Vec::with_capacity(wrap_error(unsafe {
                 LZ4F_compressBound(self.block_size.bytes() as size_t, &preferences)
             })?),
         };
@@ -95,7 +95,7 @@ impl<W: Write> Encoder<W> {
             ))?;
             self.buffer.set_len(len);
         }
-        self.writer.write_all(&self.buffer)
+        self.writer.as_mut().unwrap().write_all(&self.buffer)
     }
 
     fn write_end(&mut self) -> IOResult<()> {
@@ -108,10 +108,18 @@ impl<W: Write> Encoder<W> {
             ))?;
             self.buffer.set_len(len);
         };
-        self.writer.write_all(&self.buffer)
+        self.writer.as_mut().unwrap().write_all(&self.buffer)
     }
 
-    pub fn finish(mut self) -> IOResult<W> { self.write_end().map(|_| self.writer) }
+    pub fn finish(mut self) -> IOResult<W> { self.write_end().map(|_| self.writer.take().unwrap()) }
+}
+
+impl<W: Write> Drop for Encoder<W> {
+    fn drop(&mut self) {
+        if self.writer.is_some() {
+            let _ = self.write_end();
+        }
+    }
 }
 
 impl<W: Write> Write for Encoder<W> {
@@ -129,7 +137,7 @@ impl<W: Write> Write for Encoder<W> {
                     ptr::null(),
                 ))?;
                 self.buffer.set_len(len);
-                self.writer.write_all(&self.buffer)?;
+                self.writer.as_mut().unwrap().write_all(&self.buffer)?;
             }
             offset += size;
         }
@@ -150,8 +158,8 @@ impl<W: Write> Write for Encoder<W> {
                 }
                 self.buffer.set_len(len);
             };
-            self.writer.write_all(&self.buffer)?;
+            self.writer.as_mut().unwrap().write_all(&self.buffer)?;
         }
-        self.writer.flush()
+        self.writer.as_mut().unwrap().flush()
     }
 }
