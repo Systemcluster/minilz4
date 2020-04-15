@@ -1,9 +1,8 @@
 mod context;
 mod decoder;
 mod encoder;
-mod sys;
+pub mod sys;
 
-pub use context::*;
 pub use decoder::*;
 pub use encoder::*;
-pub use sys::*;
+pub use sys::{BlockMode, BlockSize, ContentChecksum};

@@ -98,7 +98,7 @@ impl<W: Write> Encoder<W> {
         self.writer.write_all(&self.buffer)
     }
 
-    pub fn write_end(&mut self) -> IOResult<()> {
+    fn write_end(&mut self) -> IOResult<()> {
         unsafe {
             let len = wrap_error(LZ4F_compressEnd(
                 self.context.0,
@@ -110,8 +110,6 @@ impl<W: Write> Encoder<W> {
         };
         self.writer.write_all(&self.buffer)
     }
-
-    pub fn writer(&self) -> &W { &self.writer }
 
     pub fn finish(mut self) -> IOResult<W> { self.write_end().map(|_| self.writer) }
 }
