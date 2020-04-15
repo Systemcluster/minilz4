@@ -1,0 +1,34 @@
+[package]
+
+name = "minilz4"
+description = "Minimal interface for the LZ4 compression library frame format"
+version = "0.0.0"
+authors = ["Christian Sdunek <me@systemcluster.me>"]
+repository = "https://github.com/Systemcluster/minilz4"
+license = "BSD-2-Clause"
+readme = "README.md"
+categories = ["compression", "development-tools::build-utils"]
+edition = "2018"
+include = [
+    "Cargo.toml",
+    "src/**/*",
+    "liblz4/lib/**/*",
+    "liblz4/LICENSE,",
+    "build.rs",
+    "LICENSE",
+]
+build = "build.rs"
+links = "lz4"
+
+[lib]
+
+name="minilz4"
+path="src/lib.rs"
+
+[dependencies]
+
+libc = "^0.2"
+
+[build-dependencies]
+
+cc = "^1"
