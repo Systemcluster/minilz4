@@ -1,12 +1,12 @@
 use crate::{context::*, sys::*};
 
 pub use std::io::Read;
-
-use libc::size_t;
 use std::{
     io::{Error as IOError, ErrorKind as IOErrorKind, Result as IOResult},
     ptr,
 };
+
+use libc::size_t;
 
 const BUFFER_SIZE: usize = 32 * 1024;
 
@@ -19,7 +19,7 @@ pub struct Decoder<R: Read> {
     next:     usize,
 }
 
-impl<'a, R: Read> Decoder<R> {
+impl<R: Read> Decoder<R> {
     pub fn new(reader: R) -> IOResult<Decoder<R>> {
         Ok(Decoder {
             reader,
@@ -40,8 +40,24 @@ impl<'a, R: Read> Decoder<R> {
             )),
         }
     }
+
+    pub fn decode(mut self) -> IOResult<Vec<u8>> {
+        let mut content = Vec::new();
+        self.read_to_end(&mut content)?;
+        Ok(content)
+    }
 }
 
+pub trait Decode {
+    fn decode(&mut self) -> IOResult<Vec<u8>>;
+}
+
+impl<R> Decode for R
+where
+    R: Read,
+{
+    fn decode(&mut self) -> IOResult<Vec<u8>> { Decoder::new(self)?.decode() }
+}
 
 impl<R: Read> Read for Decoder<R> {
     fn read(&mut self, buffer: &mut [u8]) -> IOResult<usize> {

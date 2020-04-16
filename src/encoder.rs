@@ -1,9 +1,13 @@
 use crate::{context::*, sys::*};
 
 pub use std::io::Write;
+use std::{
+    cmp::min,
+    io::{copy, Read, Result as IOResult},
+    ptr,
+};
 
 use libc::size_t;
-use std::{cmp::min, io::Result as IOResult, ptr};
 
 #[derive(Clone)]
 pub struct EncoderBuilder {
@@ -82,6 +86,23 @@ impl EncoderBuilder {
         encoder.write_header(&preferences)?;
         Ok(encoder)
     }
+
+    pub fn encode<R: Read>(&self, reader: &mut R) -> IOResult<Vec<u8>> {
+        let mut encoder = self.build(Vec::new())?;
+        copy(reader, &mut encoder)?;
+        encoder.finish()
+    }
+}
+
+pub trait Encode {
+    fn encode(&mut self, builder: EncoderBuilder) -> IOResult<Vec<u8>>;
+}
+
+impl<R> Encode for R
+where
+    R: Read,
+{
+    fn encode(&mut self, builder: EncoderBuilder) -> IOResult<Vec<u8>> { builder.encode(self) }
 }
 
 impl<W: Write> Encoder<W> {
