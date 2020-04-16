@@ -2,7 +2,7 @@
 
 name = "minilz4"
 description = "Minimal interface for the LZ4 compression library frame format"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Christian Sdunek <me@systemcluster.me>"]
 repository = "https://github.com/Systemcluster/minilz4"
 license = "BSD-2-Clause"
