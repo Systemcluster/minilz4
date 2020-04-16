@@ -10,6 +10,7 @@ use libc::size_t;
 
 const BUFFER_SIZE: usize = 32 * 1024;
 
+/// Decoder for LZ4 frame format data.
 pub struct Decoder<R: Read> {
     context:  LZ4FDecompressionContext,
     reader:   R,
@@ -48,6 +49,7 @@ impl<R: Read> Decoder<R> {
     }
 }
 
+/// Trait for decoding `Read` implementing objects.
 pub trait Decode {
     fn decode(&mut self) -> IOResult<Vec<u8>>;
 }

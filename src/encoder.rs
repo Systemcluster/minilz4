@@ -9,6 +9,7 @@ use std::{
 
 use libc::size_t;
 
+/// Configuration builder for the `Encoder` structure.
 #[derive(Clone)]
 pub struct EncoderBuilder {
     block_size: BlockSize,
@@ -18,6 +19,7 @@ pub struct EncoderBuilder {
     auto_flush: bool,
 }
 
+/// Encoder for LZ4 frame format data.
 pub struct Encoder<W: Write> {
     context: LZ4FCompressionContext,
     writer:  Option<W>,
@@ -94,6 +96,7 @@ impl EncoderBuilder {
     }
 }
 
+/// Trait for encoding `Read` implementing objects with an `EncoderBuilder`.
 pub trait Encode {
     fn encode(&mut self, builder: EncoderBuilder) -> IOResult<Vec<u8>>;
 }
