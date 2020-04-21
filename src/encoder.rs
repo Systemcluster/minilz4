@@ -98,14 +98,14 @@ impl EncoderBuilder {
 
 /// Trait for encoding `Read` implementing objects with an `EncoderBuilder`.
 pub trait Encode {
-    fn encode(&mut self, builder: EncoderBuilder) -> IOResult<Vec<u8>>;
+    fn encode(&mut self, builder: &EncoderBuilder) -> IOResult<Vec<u8>>;
 }
 
 impl<R> Encode for R
 where
     R: Read,
 {
-    fn encode(&mut self, builder: EncoderBuilder) -> IOResult<Vec<u8>> { builder.encode(self) }
+    fn encode(&mut self, builder: &EncoderBuilder) -> IOResult<Vec<u8>> { builder.encode(self) }
 }
 
 impl<W: Write> Encoder<W> {

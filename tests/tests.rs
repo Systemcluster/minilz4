@@ -30,7 +30,7 @@ fn encode_trait() {
     use std::io::Cursor;
 
     let data = "Blushing is the color of virtue.";
-    let encoded = Cursor::new(data).encode(EncoderBuilder::new()).unwrap();
+    let encoded = Cursor::new(data).encode(&EncoderBuilder::new()).unwrap();
 
     assert_eq!(encoded[0..10], [4, 34, 77, 24, 68, 64, 94, 32, 0, 0,]);
 }
@@ -101,7 +101,7 @@ fn equivalence() {
     use std::{io::Cursor, str::from_utf8};
 
     let data = "Blushing is the color of virtue.";
-    let encoded = Cursor::new(data).encode(EncoderBuilder::new()).unwrap();
+    let encoded = Cursor::new(data).encode(&EncoderBuilder::new()).unwrap();
     let decoded = Cursor::new(encoded).decode().unwrap();
 
     assert_eq!(data, from_utf8(&decoded).unwrap());

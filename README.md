@@ -17,7 +17,7 @@ use std::io::Cursor;
 
 let data = "Blushing is the color of virtue.";
 
-let encoded = Cursor::new(data).encode(EncoderBuilder::new()).unwrap();
+let encoded = Cursor::new(data).encode(&EncoderBuilder::new()).unwrap();
 let decoded = Cursor::new(encoded).decode().unwrap();
 ```
 
