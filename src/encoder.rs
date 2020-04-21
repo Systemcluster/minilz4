@@ -27,10 +27,9 @@ pub struct Encoder<W: Write> {
     buffer:  Vec<u8>,
 }
 
-
-impl EncoderBuilder {
-    pub fn new() -> Self {
-        EncoderBuilder {
+impl Default for EncoderBuilder {
+    fn default() -> Self {
+        Self {
             block_size: BlockSize::Max64KB,
             block_mode: BlockMode::Linked,
             checksum:   ContentChecksum::ChecksumEnabled,
@@ -38,6 +37,10 @@ impl EncoderBuilder {
             auto_flush: false,
         }
     }
+}
+
+impl EncoderBuilder {
+    pub fn new() -> Self { Self::default() }
 
     pub fn block_size(&mut self, block_size: BlockSize) -> &mut Self {
         self.block_size = block_size;
