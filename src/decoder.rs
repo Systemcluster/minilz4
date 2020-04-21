@@ -37,7 +37,7 @@ impl<R: Read> Decoder<R> {
             0 => Ok(self.reader),
             _ => Err(IOError::new(
                 IOErrorKind::Interrupted,
-                "Finish runned before read end of compressed stream",
+                "finish called before compressed stream was completely read",
             )),
         }
     }
