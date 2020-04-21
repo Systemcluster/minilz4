@@ -63,18 +63,19 @@ where
 
 impl<R: Read> Read for Decoder<R> {
     fn read(&mut self, buffer: &mut [u8]) -> IOResult<usize> {
-        if self.next == 0 || buffer.len() == 0 {
+        if self.next == 0 || buffer.is_empty() {
             return Ok(0);
         }
         let mut dst_offset: usize = 0;
         while dst_offset == 0 {
             if self.position >= self.length {
-                let need = match self.buffer.len() < self.next {
-                    true => self.buffer.len(),
-                    false => self.next,
+                let need = if self.buffer.len() < self.next {
+                    self.buffer.len()
+                } else {
+                    self.next
                 };
                 self.length = self.reader.read(&mut self.buffer[0..need])?;
-                if self.length <= 0 {
+                if self.length == 0 {
                     break;
                 }
                 self.position = 0;
