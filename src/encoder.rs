@@ -10,7 +10,7 @@ use std::{
 use libc::size_t;
 
 /// Configuration builder for the `Encoder` structure.
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct EncoderBuilder {
     block_size: BlockSize,
     block_mode: BlockMode,
