@@ -12,11 +12,12 @@ use libc::size_t;
 /// Configuration builder for the `Encoder` structure.
 #[derive(Clone, Copy)]
 pub struct EncoderBuilder {
-    block_size: BlockSize,
-    block_mode: BlockMode,
-    checksum:   ContentChecksum,
-    level:      u32,
-    auto_flush: bool,
+    block_size:      BlockSize,
+    block_mode:      BlockMode,
+    checksum:        ContentChecksum,
+    level:           u32,
+    auto_flush:      bool,
+    favor_dec_speed: bool,
 }
 
 /// Encoder for LZ4 frame format data.
@@ -30,11 +31,12 @@ pub struct Encoder<W: Write> {
 impl Default for EncoderBuilder {
     fn default() -> Self {
         Self {
-            block_size: BlockSize::Max64KB,
-            block_mode: BlockMode::Linked,
-            checksum:   ContentChecksum::ChecksumEnabled,
-            level:      0,
-            auto_flush: false,
+            block_size:      BlockSize::Max64KB,
+            block_mode:      BlockMode::Linked,
+            checksum:        ContentChecksum::ChecksumEnabled,
+            level:           0,
+            auto_flush:      false,
+            favor_dec_speed: false,
         }
     }
 }
@@ -67,17 +69,26 @@ impl EncoderBuilder {
         self
     }
 
+    pub fn favor_dec_speed(&mut self, favor_dec_speed: bool) -> &mut Self {
+        self.favor_dec_speed = favor_dec_speed;
+        self
+    }
+
     pub fn build<W: Write>(&self, writer: W) -> IOResult<Encoder<W>> {
         let preferences = LZ4FPreferences {
             frame_info:        LZ4FFrameInfo {
                 block_size_id:         self.block_size,
                 block_mode:            self.block_mode,
                 content_checksum_flag: self.checksum,
-                reserved:              [0; 5],
+                frame_type:            LZ4FrameType::LZ4Frame,
+                content_size:          0,
+                dict_id:               0,
+                block_checksum_flag:   BlockChecksum::NoChecksum,
             },
             compression_level: self.level,
             auto_flush:        self.auto_flush as u32,
-            reserved:          [0; 4],
+            favor_dec_speed:   self.favor_dec_speed as u32,
+            reserved:          [0; 3],
         };
 
         let mut encoder = Encoder {

@@ -106,3 +106,34 @@ fn equivalence() {
 
     assert_eq!(data, from_utf8(&decoded).unwrap());
 }
+
+#[test]
+fn encode_decode_file() {
+    use minilz4::{BlockMode, BlockSize, Decoder, EncoderBuilder};
+    use std::{
+        env::var,
+        fs::File,
+        io::{copy, BufReader, Read},
+        path::Path,
+    };
+
+    let source = Path::new(&var("CARGO_MANIFEST_DIR").unwrap()).join("LICENSE");
+    let file = File::open(source).unwrap();
+
+    let mut encoder = EncoderBuilder::new()
+        .auto_flush(false)
+        .level(1)
+        .block_mode(BlockMode::Linked)
+        .block_size(BlockSize::Max64KB)
+        .build(Vec::new())
+        .unwrap();
+    {
+        let mut reader = BufReader::new(&file);
+        copy(&mut reader, &mut encoder).unwrap();
+    }
+    let encoded = encoder.finish().unwrap();
+
+    let mut decoded = Vec::new();
+    let mut decoder = Decoder::new(&encoded[..]).unwrap();
+    decoder.read_to_end(&mut decoded).unwrap();
+}

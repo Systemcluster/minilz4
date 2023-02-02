@@ -37,12 +37,29 @@ pub enum ContentChecksum {
     ChecksumEnabled = 1,
 }
 
+#[derive(Clone, Copy)]
+#[repr(u32)]
+pub enum BlockChecksum {
+    NoChecksum      = 0,
+    ChecksumEnabled = 1,
+}
+
+#[derive(Clone, Copy)]
+#[repr(u32)]
+pub enum LZ4FrameType {
+    LZ4Frame       = 0,
+    SkippableFrame = 1,
+}
+
 #[repr(C)]
 pub struct LZ4FFrameInfo {
     pub block_size_id:         BlockSize,
     pub block_mode:            BlockMode,
     pub content_checksum_flag: ContentChecksum,
-    pub reserved:              [c_uint; 5],
+    pub frame_type:            LZ4FrameType,
+    pub content_size:          u64,
+    pub dict_id:               u32,
+    pub block_checksum_flag:   BlockChecksum,
 }
 
 #[repr(C)]
@@ -50,7 +67,8 @@ pub struct LZ4FPreferences {
     pub frame_info:        LZ4FFrameInfo,
     pub compression_level: c_uint,
     pub auto_flush:        c_uint,
-    pub reserved:          [c_uint; 4],
+    pub favor_dec_speed:   c_uint,
+    pub reserved:          [c_uint; 3],
 }
 
 #[repr(C)]
