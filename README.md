@@ -5,7 +5,7 @@
 
 Minimal interface for the [LZ4 compression library](https://github.com/lz4/lz4) frame format.
 
-Links to LZ4 0.9.4.
+Links to LZ4 1.9.4.
 
 ## Usage
 

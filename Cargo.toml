@@ -8,22 +8,23 @@ repository = "https://github.com/Systemcluster/minilz4"
 license = "BSD-2-Clause"
 readme = "README.md"
 categories = ["compression", "development-tools::build-utils"]
-edition = "2018"
+edition = "2021"
 include = [
-    "Cargo.toml",
-    "src/**/*",
-    "liblz4/lib/**/*",
-    "liblz4/LICENSE,",
-    "build.rs",
-    "LICENSE",
+  "Cargo.toml",
+  "src/**/*",
+  "liblz4/lib/**/*",
+  "liblz4/LICENSE,",
+  "build.rs",
+  "tests/**/*",
+  "LICENSE",
 ]
 build = "build.rs"
 links = "lz4"
 
 [lib]
 
-name="minilz4"
-path="src/lib.rs"
+name = "minilz4"
+path = "src/lib.rs"
 
 [dependencies]
 
