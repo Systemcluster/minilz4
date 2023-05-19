@@ -1,13 +1,23 @@
 # minilz4
 
 [![Crates.io](https://img.shields.io/crates/v/minilz4)](https://crates.io/crates/minilz4)
-[![Docs.rs](https://docs.rs/minilz4/badge.svg)](https://docs.rs/minilz4)
+[![Docs.rs](https://img.shields.io/docsrs/minilz4)](https://docs.rs/minilz4)
+[![Tests & Checks](https://img.shields.io/github/actions/workflow/status/Systemcluster/minilz4/tests.yml?label=tests%20%26%20checks)](https://github.com/Systemcluster/minilz4/actions/workflows/tests.yml)
 
 Minimal interface for the [LZ4 compression library](https://github.com/lz4/lz4) frame format.
 
-Links to LZ4 1.9.4.
+Links to [LZ4 1.9.4](https://github.com/lz4/lz4/releases/tag/v1.9.4).
 
 ## Usage
+
+`minilz4` provides `Encoder` and `Decoder` structs to encode and decode commpressed data in the LZ4 frame format, as well as `Encode` and `Decode` traits with convenience methods for `Read` and `Write` types.
+
+### Dependency
+
+```toml
+[dependencies]
+minilz4 = "^0.6"
+```
 
 ### Examples
 
